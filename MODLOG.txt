@@ -1,0 +1,24 @@
+﻿----------------------------------------------------------------------------------------------------------------
+--
+#Original Author:        MWT                            #
+#Date Created:           11/9/2023                      #
+#Version:                                               #
+#Date Last Modified:                                    #
+#Modified by:                                           #
+#Modification log:           
+				-	created initial calltrak object
+					and set up connection to db. seeded some
+					test data, and set up the view to show the ct's 
+					based on id passed in route. 
+
+				-	added search functionality and the ability to save and add new CT's
+					formatting saves YAY!
+
+					next step GIT. then make it look pretty when you add or save some sort of message,
+					after you save a new ct maybe it should just notify but keep it on the most recent ct?
+
+					after that I think add the remaining fields and related tables
+
+
+ --
+------------------------------------------------------------------------------------------------------------------>

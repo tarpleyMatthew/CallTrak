@@ -1,0 +1,86 @@
+﻿@model CallTrak
+@{
+    ViewData["Title"] = "Home Page";
+
+    if (TempData["AlertMessage"] != null)
+    {
+        <script>
+            alert('@TempData["AlertMessage"]');
+        </script>
+    }
+}
+
+<script src="https://kit.fontawesome.com/b7f176f682.js" crossorigin="anonymous"></script>
+
+<div id="main_container">
+
+    <h2 class="text-primary m-3 text-center">Calltrak System</h2>
+    <!--search bar-->
+    <form class="ms-4"id="search" method="get">
+        <label for="#search_bar" class="text-secondary">Search</label>
+        <input id="search_bar" placeholder="Search.." name="id"/>
+        <button type="submit"class="btn btn-primary">Search</button>
+    </form>
+
+    
+
+    <!--CallTrak Container-->
+    <div id="calltrak_container" class="m-4">
+        <!--define tabs-->
+        <ul class="nav nav-tabs" id="myTab">
+            <li class="nav-item">
+                <a href="#description" class="nav-link active" data-bs-toggle="tab">Description</a>
+            </li>
+            <li class="nav-item">
+                <a href="#action" class="nav-link" data-bs-toggle="tab">Action</a>
+            </li>
+            <li class="nav-item">
+                <a href="#dev_notes" class="nav-link" data-bs-toggle="tab">Developer Notes</a>
+            </li>
+            <li class="nav-item">
+                <a href="#billing_notes" class="nav-link" data-bs-toggle="tab">Billing Notes</a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link text-secondary" data-bs-toggle="tab"><i class="fa-solid fa-plus"></i></a>
+            </li>
+        </ul>
+        <!--tab content-->
+        <form class="mt-3" asp-action="Index" method="post">
+            <div class="tab-content">
+                <!--description-->
+                <div class="tab-pane fade show active" id="description">
+                    <textarea asp-for="DescriptionContents" id="description_editor" placeholder="Enter description here..."></textarea>
+                </div>
+
+                <!--action-->
+                <div class="tab-pane fade" id="action">
+                    <textarea asp-for="ActionContents" id="action_editor" placeholder="Enter actions here..."></textarea>
+                </div>
+
+                <!--dev notes-->
+                <div class="tab-pane fade" id="dev_notes">
+                    <textarea asp-for="DevNotesContents" id="dev_notes_editor" placeholder="Enter developer notes here..."></textarea>
+                </div>
+
+                <!--billing notes-->
+                <div class="tab-pane fade" id="billing_notes">
+                    <textarea asp-for="BillingNotesContents" id="billing_notes_editor" placeholder="Enter billing notes here..."></textarea>
+                </div>
+            </div>
+
+            <!--buttons-->
+            <div class="d-flex mt-3">
+                <input type="hidden" asp-for="CallTrakID" />
+                <a asp-action="Add" class="btn btn-primary m-1">New CallTrak</a>
+                <button type="submit" class="btn btn-primary m-1">Save</button>
+            </div>
+        </form>
+
+        
+    </div><!--end CallTrak-->
+
+</div><!--End main container-->
+
+
+
+

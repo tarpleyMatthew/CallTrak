@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>TinyMCE</id>
+        <version>6.7.2</version>
+        <authors>Ephox Corporation DBA Tiny Technologies, Inc</authors>
+        <owners>Ephox Corporation DBA Tiny Technologies, Inc</owners>
+        <licenseUrl>https://www.tiny.cloud/license</licenseUrl>
+        <projectUrl>https://www.tiny.cloud/</projectUrl>
+        <iconUrl>https://www.tiny.cloud/favicon-32x32.png</iconUrl>
+        <requireLicenseAcceptance>true</requireLicenseAcceptance>
+        <description>The best WYSIWYG editor! TinyMCE is a platform independent web based Javascript HTML WYSIWYG editor control released as Open Source under MIT by Tiny Technologies, Inc. TinyMCE has the ability to convert HTML TEXTAREA fields or other HTML elements to editor instances. TinyMCE is very easy to integrate into other Content Management Systems.</description>
+        <summary>TinyMCE is a platform independent web based Javascript HTML WYSIWYG editor control released as Open Source under MIT by Tiny Technologies, Inc.</summary>
+        <releaseNotes>Release notes for my package.</releaseNotes>
+        <tags>Editor TinyMCE HTML HTMLEditor</tags>
+    </metadata>
+</package>
