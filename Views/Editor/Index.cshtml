@@ -1,0 +1,154 @@
+﻿@model CallTrakViewModel
+@{
+    ViewData["Title"] = "Home Page";
+
+    if (TempData["AlertMessage"] != null)
+    {
+        <script>
+            alert('@TempData["AlertMessage"]');
+        </script>
+    }
+}
+
+<script src="https://kit.fontawesome.com/b7f176f682.js" crossorigin="anonymous"></script>
+
+<div id="main_container">
+
+    <h2 class="text-primary m-3 text-center">Editor</h2>
+    <!--search bar-->
+    <form class="ms-4"id="search" method="get">
+        <!--Dashboard link-->
+        <a asp-controller="Home" asp-action="Index" class="me-2"><b>Dashboard</b></a>
+
+        <label for="#search_bar" class="text-secondary">Search</label>
+        <input id="search_bar" placeholder="Search.." name="id"/>
+        <button type="submit"class="btn btn-primary">Search</button>
+    </form>
+
+    
+    <form class="mt-3" asp-action="Index" method="post">
+
+        <!--CT header-->
+        <div class="d-flex">
+            <div class="me-2 mb-2">
+                <label for="status">Status</label>
+                <select asp-for="@Model.CurrentCT.StatusID" class="form-control">
+                    @foreach(Status status in Model.Statuses)
+                    {
+                        if(status.StatusID == Model.CurrentCT.StatusID)
+                        {
+                            <option value="@status.StatusID" selected>@status.Description</option>
+                        }
+                        else
+                        {
+                            <option value="@status.StatusID">@status.Description</option>
+                        } 
+                    }
+                </select>
+            </div>
+            <div class="me-2">
+                <label for="client">Client</label>
+                <select asp-for="@Model.CurrentCT.ClientID" class="form-control">
+                    @foreach(Client client in Model.Clients)
+                    {
+                        if(client.ClientID == Model.CurrentCT.ClientID)
+                        {
+                            <option value="@client.ClientID" selected>@client.Name</option>
+                        }
+                        else
+                        {
+                            <option value="@client.ClientID">@client.Name</option>
+                        } 
+                    }
+                </select>
+            </div>
+            <div class="me-2">
+                <label for="employee">Employee</label>
+                <select asp-for="@Model.CurrentCT.EmployeeID" class="form-control">
+                    @foreach(Employee employee in Model.Employees)
+                    {
+                        if (employee.EmployeeID == Model.CurrentCT.EmployeeID)
+                        {
+                            <option value="@employee.EmployeeID" selected>@(employee.FirstName + " " + employee.LastName)</option>
+                        }
+                        else
+                        {
+                            <option value="@employee.EmployeeID">@(employee.FirstName + " " + employee.LastName)</option>
+                        } 
+                    }
+                </select>
+            </div>
+            <div class="me-2">
+                <label for="type">Type</label>
+                <select asp-for="@Model.CurrentCT.TypeID" class="form-control">
+                    @foreach(CallTrak_System.Models.Type type in Model.Types)
+                    {
+                        if (type.TypeID == Model.CurrentCT.TypeID)
+                        {
+                            <option value="@type.TypeID" selected>@type.Description</option>
+                        }
+                        else
+                        {
+                            <option value="@type.TypeID">@type.Description</option>
+                        } 
+                    }
+                </select>
+            </div>
+        </div>
+
+        <!--define tabs-->
+        <ul class="nav nav-tabs" id="myTab">
+            <li class="nav-item">
+                <a href="#description" class="nav-link active" data-bs-toggle="tab">Description</a>
+            </li>
+            <li class="nav-item">
+                <a href="#action" class="nav-link" data-bs-toggle="tab">Action</a>
+            </li>
+            <li class="nav-item">
+                <a href="#dev_notes" class="nav-link" data-bs-toggle="tab">Developer Notes</a>
+            </li>
+            <li class="nav-item">
+                <a href="#billing_notes" class="nav-link" data-bs-toggle="tab">Billing Notes</a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link text-secondary" data-bs-toggle="tab"><i class="fa-solid fa-plus"></i></a>
+            </li>
+        </ul>
+
+            <!--tab content-->
+            <div class="tab-content">
+                <!--description-->
+                <div class="tab-pane fade show active" id="description">
+                    <textarea asp-for="@Model.CurrentCT.DescriptionContents" id="description_editor" placeholder="Enter description here..."></textarea>
+                </div>
+
+                <!--action-->
+                <div class="tab-pane fade" id="action">
+                    <textarea asp-for="@Model.CurrentCT.ActionContents" id="action_editor" placeholder="Enter actions here..."></textarea>
+                </div>
+
+                <!--dev notes-->
+                <div class="tab-pane fade" id="dev_notes">
+                    <textarea asp-for="@Model.CurrentCT.DevNotesContents" id="dev_notes_editor" placeholder="Enter developer notes here..."></textarea>
+                </div>
+
+                <!--billing notes-->
+                <div class="tab-pane fade" id="billing_notes">
+                    <textarea asp-for="@Model.CurrentCT.BillingNotesContents" id="billing_notes_editor" placeholder="Enter billing notes here..."></textarea>
+                </div>
+            </div>
+
+            <!--buttons-->
+            <div class="d-flex mt-3">
+                <input type="hidden" asp-for="@Model.CurrentCT.CallTrakID" />
+                <a asp-action="Add" class="btn btn-primary m-1">New CallTrak</a>
+                <button type="submit" class="btn btn-primary m-1">Save</button>
+            </div>
+        </form>
+
+        
+    </div><!--end CallTrak-->
+
+
+
+

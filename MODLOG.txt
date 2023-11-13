@@ -6,18 +6,17 @@
 #Date Last Modified:                                    #
 #Modified by:                                           #
 #Modification log:           
-				-	created initial calltrak object
-					and set up connection to db. seeded some
-					test data, and set up the view to show the ct's 
-					based on id passed in route. 
+				-Okay where are we. 
+				We have dashboard but I only have access to the data in the current CT ie Employee ID but not the name of the employee ect
+				I need to be able to access the related table data
 
-				-	added search functionality and the ability to save and add new CT's
-					formatting saves YAY!
+				We can edit CT's and save but I havent tried adding 
 
-					next step GIT. then make it look pretty when you add or save some sort of message,
-					after you save a new ct maybe it should just notify but keep it on the most recent ct?
+				Next step send images from workstation and add all the related fields I may need to build the dashboard properly
+				im thinking mainly the short description since that can just be text/input field. As of now if you bring TINYMCE content into the 
+				dashboard row it will populate with html tags. 
 
-					after that I think add the remaining fields and related tables
+				then update database and views and then build the dashboard out 
 
 
  --

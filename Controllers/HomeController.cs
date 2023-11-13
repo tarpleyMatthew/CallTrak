@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Diagnostics;
+using Microsoft.EntityFrameworkCore;
 
 namespace CallTrak_System.Controllers
 {
@@ -16,62 +17,22 @@ namespace CallTrak_System.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index(int id = 1)
+        public IActionResult Index()
         {
-            //validate entry if load from search
-            int totalCallTraks = context.CallTraks.Count();
-            if(id < 1 || id > totalCallTraks)
-            {
-                TempData["AlertMessage"] = "Invalid ID. Please enter a valid ID.";
-                return RedirectToAction("Index");
-            }
+            CallTrakViewModel model = new CallTrakViewModel();
 
-            //find ct
-            var callTrak = context.CallTraks.Find(id);
+            model.CallTraks = context.CallTraks
+                .Include(c => c.Employee)
+                .Include(c => c.Type)
+                .Include(c => c.Employee)
+                .OrderBy(c => c.CallTrakID).ToList();
+            model.Employees = context.Employees.ToList();
+            model.Clients = context.Clients.ToList();
+            model.Statuses = context.Statuses.ToList();
+            model.Types = context.Types.ToList();
 
-            //if ct null return error
-            if (callTrak == null)
-            {
-                TempData["AlertMessage"] = "CallTrak not found.";
-                return RedirectToAction("Index");
-            }
 
-            return View(callTrak);
-        }
-
-        //post Index action from save button that will add or update depending if CT passed is empty
-
-        [HttpPost]
-        public IActionResult Index(CallTrak callTrak)
-        {
-            if (ModelState.IsValid)
-            {
-                if (callTrak.CallTrakID == 0)
-                {
-                    context.Add(callTrak);
-                }
-                else
-                {
-                    context.Update(callTrak);
-                }
-    
-                context.SaveChanges();
-                return RedirectToAction("Index");
-
-            } 
-            else
-            {
-                return View(callTrak);
-            }
-
-        }
-
-        //get add action that passes empty CT
-        [HttpGet]
-        public IActionResult Add()
-        {
-            return View("Index", new CallTrak());
-
+            return View(model);
         }
 
     }

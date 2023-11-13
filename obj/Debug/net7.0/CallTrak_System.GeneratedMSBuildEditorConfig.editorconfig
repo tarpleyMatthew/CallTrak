@@ -16,6 +16,10 @@ build_property.GenerateRazorMetadataSourceChecksumAttributes =
 build_property.MSBuildProjectDirectory = C:\Users\tarpl\OneDrive\Documents\Projects_2\CallTrak System\CallTrak_System\CallTrak_System
 build_property._RazorSourceGeneratorDebug = 
 
+[C:/Users/tarpl/OneDrive/Documents/Projects_2/CallTrak System/CallTrak_System/CallTrak_System/Views/Editor/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRWRpdG9yXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/tarpl/OneDrive/Documents/Projects_2/CallTrak System/CallTrak_System/CallTrak_System/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
