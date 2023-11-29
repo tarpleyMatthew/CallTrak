@@ -6,17 +6,58 @@
 #Date Last Modified:                                    #
 #Modified by:                                           #
 #Modification log:           
-				-Okay where are we. 
-				We have dashboard but I only have access to the data in the current CT ie Employee ID but not the name of the employee ect
-				I need to be able to access the related table data
+				Main thing now is make the UI stable on different screen sizes
+				it doesnt have to be fully mobile responsive but at least handle some common bigger
+				screensizes okay.
 
-				We can edit CT's and save but I havent tried adding 
+				Then I can work on formating the dashboard and editor a bit within that
 
-				Next step send images from workstation and add all the related fields I may need to build the dashboard properly
-				im thinking mainly the short description since that can just be text/input field. As of now if you bring TINYMCE content into the 
-				dashboard row it will populate with html tags. 
+				I would like to add two things as after:
 
-				then update database and views and then build the dashboard out 
+					a way to maintain state between reloads when setting the filter I was pretty close but I need to 
+					do something to handle 0-0-0-0 values when it posts better.
+
+					editing hours changing the delete hours to edit hours and modify the modal to handle that
+
+				Those could be after adding the admin area, but I still need Admin area to be able to update CT properties
+				the ability to archive CTs, and the hours area (see peoples hours per client ect).
+
+				After all that then login capabilites
+
+				for now just work on making the UI stable and formating the editor and dashboard a bit.
+
+				notes for later on how I was thinking to handle the state within the select element: 
+					 <select name="filterArray"
+                            asp-items="@(Model.SelectedFilters == null ? new SelectList(Model.Employees, "EmployeeID", "FirstName") : null )" class="form-control">
+                        @{
+                            int sumfilts = 0;
+                            if (Model.SelectedFilters != null)
+                            {
+                                
+                                foreach (int num in Model.SelectedFilters)
+                                {
+                                    sumfilts += num;
+                                }
+                            }
+                        }
+
+                        @if (Model.SelectedFilters != null && Model.SelectedFilters.Length > 0 && sumfilts > 0)
+                        {
+                            <option value="0" selected>All</option>
+                            foreach (var employee in Model.Employees)
+                            {
+                                <option value="@employee.EmployeeID" selected="@(Model.SelectedFilters.Contains(employee.EmployeeID) ? "selected" : "")">
+                                    @employee.FirstName
+                                </option>
+                            } 
+                        }
+                        else
+                        {
+                            <option value="0" selected>All</option>
+                        }
+                        }
+                    </select>
+
 
 
  --

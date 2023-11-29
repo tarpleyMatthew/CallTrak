@@ -1,6 +1,9 @@
-﻿@model CallTrakViewModel
+﻿@using CallTrak_System.Models.DataLayer;
+
+@model CallTrak_System.Models.DataAccess.CallTrakViewModel
 @{
     ViewData["Title"] = "Home Page";
+    int modalid = 0;
 
     if (TempData["AlertMessage"] != null)
     {
@@ -8,146 +11,547 @@
             alert('@TempData["AlertMessage"]');
         </script>
     }
+
 }
 
-<script src="https://kit.fontawesome.com/b7f176f682.js" crossorigin="anonymous"></script>
+<script src="~/js/CallTrakEditor.js"></script>
 
 <div id="main_container">
 
     <h2 class="text-primary m-3 text-center">Editor</h2>
+
     <!--search bar-->
-    <form class="ms-4"id="search" method="get">
-        <!--Dashboard link-->
-        <a asp-controller="Home" asp-action="Index" class="me-2"><b>Dashboard</b></a>
-
-        <label for="#search_bar" class="text-secondary">Search</label>
-        <input id="search_bar" placeholder="Search.." name="id"/>
-        <button type="submit"class="btn btn-primary">Search</button>
-    </form>
-
-    
-    <form class="mt-3" asp-action="Index" method="post">
-
-        <!--CT header-->
-        <div class="d-flex">
-            <div class="me-2 mb-2">
-                <label for="status">Status</label>
-                <select asp-for="@Model.CurrentCT.StatusID" class="form-control">
-                    @foreach(Status status in Model.Statuses)
-                    {
-                        if(status.StatusID == Model.CurrentCT.StatusID)
-                        {
-                            <option value="@status.StatusID" selected>@status.Description</option>
-                        }
-                        else
-                        {
-                            <option value="@status.StatusID">@status.Description</option>
-                        } 
-                    }
-                </select>
-            </div>
-            <div class="me-2">
-                <label for="client">Client</label>
-                <select asp-for="@Model.CurrentCT.ClientID" class="form-control">
-                    @foreach(Client client in Model.Clients)
-                    {
-                        if(client.ClientID == Model.CurrentCT.ClientID)
-                        {
-                            <option value="@client.ClientID" selected>@client.Name</option>
-                        }
-                        else
-                        {
-                            <option value="@client.ClientID">@client.Name</option>
-                        } 
-                    }
-                </select>
-            </div>
-            <div class="me-2">
-                <label for="employee">Employee</label>
-                <select asp-for="@Model.CurrentCT.EmployeeID" class="form-control">
-                    @foreach(Employee employee in Model.Employees)
-                    {
-                        if (employee.EmployeeID == Model.CurrentCT.EmployeeID)
-                        {
-                            <option value="@employee.EmployeeID" selected>@(employee.FirstName + " " + employee.LastName)</option>
-                        }
-                        else
-                        {
-                            <option value="@employee.EmployeeID">@(employee.FirstName + " " + employee.LastName)</option>
-                        } 
-                    }
-                </select>
-            </div>
-            <div class="me-2">
-                <label for="type">Type</label>
-                <select asp-for="@Model.CurrentCT.TypeID" class="form-control">
-                    @foreach(CallTrak_System.Models.Type type in Model.Types)
-                    {
-                        if (type.TypeID == Model.CurrentCT.TypeID)
-                        {
-                            <option value="@type.TypeID" selected>@type.Description</option>
-                        }
-                        else
-                        {
-                            <option value="@type.TypeID">@type.Description</option>
-                        } 
-                    }
-                </select>
-            </div>
-        </div>
-
-        <!--define tabs-->
-        <ul class="nav nav-tabs" id="myTab">
-            <li class="nav-item">
-                <a href="#description" class="nav-link active" data-bs-toggle="tab">Description</a>
-            </li>
-            <li class="nav-item">
-                <a href="#action" class="nav-link" data-bs-toggle="tab">Action</a>
-            </li>
-            <li class="nav-item">
-                <a href="#dev_notes" class="nav-link" data-bs-toggle="tab">Developer Notes</a>
-            </li>
-            <li class="nav-item">
-                <a href="#billing_notes" class="nav-link" data-bs-toggle="tab">Billing Notes</a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link text-secondary" data-bs-toggle="tab"><i class="fa-solid fa-plus"></i></a>
-            </li>
-        </ul>
-
-            <!--tab content-->
-            <div class="tab-content">
-                <!--description-->
-                <div class="tab-pane fade show active" id="description">
-                    <textarea asp-for="@Model.CurrentCT.DescriptionContents" id="description_editor" placeholder="Enter description here..."></textarea>
-                </div>
-
-                <!--action-->
-                <div class="tab-pane fade" id="action">
-                    <textarea asp-for="@Model.CurrentCT.ActionContents" id="action_editor" placeholder="Enter actions here..."></textarea>
-                </div>
-
-                <!--dev notes-->
-                <div class="tab-pane fade" id="dev_notes">
-                    <textarea asp-for="@Model.CurrentCT.DevNotesContents" id="dev_notes_editor" placeholder="Enter developer notes here..."></textarea>
-                </div>
-
-                <!--billing notes-->
-                <div class="tab-pane fade" id="billing_notes">
-                    <textarea asp-for="@Model.CurrentCT.BillingNotesContents" id="billing_notes_editor" placeholder="Enter billing notes here..."></textarea>
-                </div>
-            </div>
-
-            <!--buttons-->
-            <div class="d-flex mt-3">
-                <input type="hidden" asp-for="@Model.CurrentCT.CallTrakID" />
-                <a asp-action="Add" class="btn btn-primary m-1">New CallTrak</a>
-                <button type="submit" class="btn btn-primary m-1">Save</button>
-            </div>
+    <div class="d-flex justify-content-end">
+        <form action="/Editor/Index" class="ms-4" id="search" method="get">
+            <label for="search_bar" class="text-secondary">Search</label>
+            <input id="search_bar" placeholder="Search.." name="id" />
+            <button type="submit" class="btn btn-primary">Search</button>
         </form>
+    </div>
 
-        
-    </div><!--end CallTrak-->
+    <div asp-validation-summary="All" class="text-danger"></div>
+    
+    <form asp-action="Index" class="mt-3" method="post">
+        <!--parent row-->
+        <div class="row">
+            <!--left side-->
+            <div class="col-sm-9">
+
+                <!--ct#/date/short desc-->
+                <div class="row mb-2">
+                    <div class="col-sm-1">
+                        <label for="ctnum" class="form-label">CT #</label>
+                        <input asp-for="@Model.CurrentCT.CallTrakID" class="form-control" id="ctnum" readonly />
+                    </div>
+                    <div class="col-sm-2">
+                        <label for="date" class="form-label">Date Opened</label>
+                        <input class="form-control" id="date"
+                               value="@((Model.CurrentCT.DateOpened ?? DateTime.Today).Date.ToString("MM/dd/yyyy"))" readonly />
+                        <input asp-for="@Model.CurrentCT.DateOpened" type="hidden" />
+                    </div>
+                    <div class="col-sm">
+                        <label for="short-desc" class="form-label">Short Description</label>
+                        <input asp-for="@Model.CurrentCT.ShortDesc" class="form-control" placeholder="Short Description..." id="short-desc" />
+                    </div>
+                </div>
+
+                <!--client/version/company/module/type/menu path-->
+                <div class="row mb-2">
+                    <div class="col-sm-3">
+                        <label for="client" class="form-label">Client</label>
+                        <select asp-for="@Model.CurrentCT.ClientID" class="form-control" id="client">
+                            @if(Model.CurrentCT.ClientID == null)
+                            {
+                                <option value="" class="text-secondary" selected>-- Select Client --</option>
+                                @foreach (Client client in Model.Clients)
+                                {
+                                    <option value="@client.ClientID">@client.Name</option>
+                                }
+                            }
+                            else
+                            {
+                                foreach (Client client in Model.Clients)
+                                {
+                                    <option value="@client.ClientID"
+                                        selected="@(client.ClientID == Model.CurrentCT.ClientID ? "selected" : null)">@client.Name</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="col-sm-1">
+                        <label for="company" class="form-label">Company</label>
+                        <input asp-for="@Model.CurrentCT.Company" class="form-control" id="company" placeholder="---" />
+                    </div>
+                    <div class="col-sm-1">
+                        <label for="version" class="form-label">Version</label>
+
+                        <select asp-for="@Model.CurrentCT.VersionID" class="form-control" id="version">
+                            @if(Model.CurrentCT.VersionID == null)
+                            {
+                                <option value="" class="text-secondary" selected>-- Select Version --</option>
+                                @foreach (CallTrak_System.Models.DataLayer.Version version in Model.Versions)
+                                {
+                                    <option value="@version.VersionId">@version.Description</option>
+                                }
+                            }
+                            else
+                            {
+                                foreach (CallTrak_System.Models.DataLayer.Version version in Model.Versions)
+                                {
+                                    <option value="@version.VersionId" 
+                                        selected="@(version.VersionId == Model.CurrentCT.VersionID ? "selected" : null)">@version.Description</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="col-sm-1">
+                        <label for="module" class="form-label">Module</label>
+
+                        <select asp-for="@Model.CurrentCT.ModuleID" class="form-control" id="module">
+                            @if(Model.CurrentCT.ModuleID == null)
+                            {
+                                <option value="" class="text-secondary" selected>-- Select Module --</option>
+                                @foreach (Module module in Model.Modules)
+                                {
+                                    <option value="@module.ModuleId">@module.Description</option>
+                                }
+                            }
+                            else
+                            {
+                                foreach (Module module in Model.Modules)
+                                {
+                                    <option value="@module.ModuleId"
+                                    selected="@(module.ModuleId == Model.CurrentCT.ModuleID ? "selected" : null)">@module.Description</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="col-sm-2">
+                        <label for="type" class="form-label">Type</label>
+                        <select asp-for="@Model.CurrentCT.TypeID" class="form-control" id="type">
+                            @if(Model.CurrentCT.TypeID == null)
+                            {
+                                <option value="" class="text-secondary" selected>-- Select Type --</option>
+                                @foreach (CallTrak_System.Models.DataLayer.Type type in Model.Types)
+                                {
+                                    <option value="@type.TypeID">@type.Description</option>
+                                }
+
+                            }
+                            else
+                            {
+                                @foreach (CallTrak_System.Models.DataLayer.Type type in Model.Types)
+                                {
+                                    <option value="@type.TypeID"
+                                        selected="@(type.TypeID == Model.CurrentCT.TypeID ? "selected" : null)">@type.Description</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="col-sm-4">
+                        <label for="menu-path" class="form-label">Menu Path</label>
+                        <input asp-for="@Model.CurrentCT.MenuPath" class="form-control" placeholder="Menu Path..." id="menu-path" />
+                    </div>
+                </div>
+                <!--text editors-->
+                <div class="">
+                    <!--define tabs-->
+                    <ul class="nav nav-tabs" id="myTab">
+                        <li class="nav-item">
+                            <a href="#description" class="nav-link active" data-bs-toggle="tab">Description</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#action" class="nav-link" data-bs-toggle="tab">Action</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#dev_notes" class="nav-link" data-bs-toggle="tab">Developer Notes</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#billing_notes" class="nav-link" data-bs-toggle="tab">Billing Notes</a>
+                        </li>
+                    </ul>
+
+                    <!--tab content-->
+                    <div class="mt-2 tab-content">
+                        <!--description-->
+                        <div class="tab-pane fade show active" id="description">
+                            <textarea asp-for="@Model.CurrentCT.DescriptionContents" id="description_editor" placeholder="Enter description here..."></textarea>
+                        </div>
+
+                        <!--action-->
+                        <div class="tab-pane fade" id="action">
+                            <textarea asp-for="@Model.CurrentCT.ActionContents" id="action_editor" placeholder="Enter actions here..."></textarea>
+                        </div>
+
+                        <!--dev notes-->
+                        <div class="tab-pane fade" id="dev_notes">
+                            <textarea asp-for="@Model.CurrentCT.DevNotesContents" id="dev_notes_editor" placeholder="Enter developer notes here..."></textarea>
+                        </div>
+
+                        <!--billing notes-->
+                        <div class="tab-pane fade" id="billing_notes">
+                            <textarea asp-for="@Model.CurrentCT.BillingNotesContents" id="billing_notes_editor" placeholder="Enter billing notes here..."></textarea>
+                        </div>
+                    </div>
+
+                    <!--buttons-->
+                    <div class="d-flex mt-3">
+                        <input type="hidden" asp-for="@Model.CurrentCT.CallTrakID" />
+                        <a asp-action="Add" class="btn btn-primary m-1">New CallTrak</a>
+                        <button type="submit" name="submitButton" class="btn btn-primary m-1" value="save">Save</button>
+                    </div>
+                </div>
+
+            </div>
+            <!--end left side-->
+
+            <!--right side-->
+            <div class="col-sm-3">
+
+                <ul class="nav nav-tabs" id="myTab">
+                    <li class="nav-item">
+                        <a href="#status" class="nav-link active" data-bs-toggle="tab">Status</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#work-log" class="nav-link" data-bs-toggle="tab">Work Log</a>
+                    </li>
+                </ul>
+
+                <!--tab content-->
+                <div class="mt-2 tab-content">
+                    <!--status-->
+                    <div class="tab-pane fade show active" id="status">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <!--primary status-->
+                                        <label for="status" class="form-label">Primary Status</label>
+                                        <select asp-for="@Model.CurrentCT.StatusID" class="form-control" id="status">
+                                            @if (Model.CurrentCT.StatusID == null)
+                                            {
+                                                <option value="" class="text-secondary" selected>-- Select Status --</option>
+                                                @foreach (Status status in Model.Statuses)
+                                                {
+                                                    <option value="@status.StatusID">@status.Description</option>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                foreach (Status status in Model.Statuses)
+                                                {
+                                                    <option value="@status.StatusID"
+                                                    selected="@(status.StatusID == Model.CurrentCT.StatusID ? "selected" : null)">@status.Description</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+
+                                    <div class="col-sm-6">
+                                        <label for="priority" class="form-label">Priority</label>
+                                        <select asp-for="@Model.CurrentCT.PriorityID" class="form-control" id="priority">
+                                            @if(Model.CurrentCT.PriorityID == null)
+                                            {
+                                                <option value="" class="text-secondary" selected>-- Select Priority --</option>
+                                                @foreach(Priority priority in Model.Priorities)
+                                                {
+                                                    <option value="@priority.PriorityId">@priority.Description</option>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                foreach(Priority priority in Model.Priorities)
+                                                {
+                                                   <option value="@priority.PriorityId"
+                                                        selected="@(priority.PriorityId == Model.CurrentCT.PriorityID ? "selected" : null)">@priority.Description</option> 
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <hr />
+
+                                <!--status check boxes-->
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <input asp-for="@Model.CurrentCT.IsApproved" class="form-check-input date-checkbox" type="checkbox" id="approved"/>
+                                        <label class="form-check-label" for="approved"><small>Approved</small></label>  
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input asp-for="@Model.CurrentCT.ApprovedDate" class="form-control h-75 date-input" type="date" />
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <input asp-for="@Model.CurrentCT.IsBeginCode" class=" form-check-input date-checkbox" type="checkbox" id="begin-coding" />
+                                        <label class="form-check-label" for="begin-coding"><small>Begin Coding</small></label>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input asp-for="@Model.CurrentCT.BeginCodeDate" class="form-control h-75 date-input" type="date" />
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <input asp-for="@Model.CurrentCT.IsEndCode" class="form-check-input date-checkbox" type="checkbox" id="end-coding" />
+                                        <label class="form-check-label" for="end-coding"><small>End Coding</small></label>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input asp-for="@Model.CurrentCT.EndCodeDate" class="form-control h-75 date-input" type="date" />
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <input asp-for="@Model.CurrentCT.IsCodeRev" class="form-check-input date-checkbox" type="checkbox" id="code-review" />
+                                        <label class="form-check-label" for="code-review"><small>Code Review</small></label>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input asp-for="@Model.CurrentCT.CodeRevDate" class="form-control h-75 date-input" type="date" />
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <input asp-for="@Model.CurrentCT.IsBeginTest" class="form-check-input date-checkbox" type="checkbox" id="begin-testing" />
+                                        <label class="form-check-label" for="begin-testing"><small>Begin Testing</small></label>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input asp-for="@Model.CurrentCT.BeginTestDate" class="form-control h-75 date-input" type="date" />
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <input asp-for="@Model.CurrentCT.IsEndTest" class="form-check-input date-checkbox" type="checkbox" id="end-testing" />
+                                        <label class="form-check-label" for="end-testing"><small>End Testing</small></label>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input asp-for="@Model.CurrentCT.EndTestDate" class="form-control h-75 date-input" type="date" />
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <input asp-for="@Model.CurrentCT.IsReadyInstall" class="form-check-input date-checkbox" type="checkbox" id="ready-install" />
+                                        <label class="form-check-label" for="ready-install"><small>Ready Install</small></label>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input asp-for="@Model.CurrentCT.ReadyInstallDate" class="form-control h-75 date-input" type="date" />
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <input asp-for="@Model.CurrentCT.IsInTest" class="form-check-input date-checkbox" type="checkbox" id="in-test" />
+                                        <label class="form-check-label" for="in-test"><small>In Test</small></label>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input asp-for="@Model.CurrentCT.InTestDate" class="form-control h-75 date-input" type="date" />
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <input asp-for="@Model.CurrentCT.IsInLive" class="form-check-input date-checkbox" type="checkbox" id="in-live" />
+                                        <label class="form-check-label" for="in-live"><small>In Live</small></label>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input asp-for="@Model.CurrentCT.InLiveDate" class="form-control h-75 date-input" type="date" />
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <input asp-for="@Model.CurrentCT.IsConfirmed" class="form-check-input date-checkbox" type="checkbox" id="confirmed" />
+                                        <label class="form-check-label" for="confirmed"><small>Confirmed</small></label>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input asp-for="@Model.CurrentCT.ConfirmedDate" class="form-control h-75 date-input" type="date" />
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <input asp-for="@Model.CurrentCT.IsBilled" class="form-check-input date-checkbox" type="checkbox" id="billed" />
+                                        <label class="form-check-label" for="billed"><small>Billed</small></label>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input asp-for="@Model.CurrentCT.BilledDate" class="form-control h-75 date-input" type="date" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!--work log-->
+                    <div class="tab-pane fade" id="work-log">
+                        <div class="card">
+                            <div class="card-body">
+                                <label for="employee" class="form-label">Assigned To</label>
+                                <select asp-for="@Model.CurrentCT.EmployeeID" class="form-control" id="employee">
+                                    @foreach (Employee employee in Model.Employees)
+                                    {
+                                        if (employee.EmployeeID == Model.CurrentCT.EmployeeID)
+                                        {
+                                            <option value="@employee.EmployeeID" selected>@(employee.FirstName + " " + employee.LastName)</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@employee.EmployeeID">@(employee.FirstName + " " + employee.LastName)</option>
+                                        }
+                                    }
+                                </select>
+                                <br />
+                                <div class="row">
+                                    <b class="text-secondary">Add Hours</b>
+
+                                    <div class="col-sm-4">
+                                        <label for="add-emp" class="col-form-label"><small>Employee</small></label>
+                                        <select asp-for="@Model.CurrentWL.EmployeeID" class="form-control" id="add-emp">
+                                            @foreach (Employee employee in Model.Employees)
+                                            {
+                                                if (employee.EmployeeID == Model.CurrentCT.EmployeeID)
+                                                {
+                                                    <option value="@employee.EmployeeID" selected>@(employee.Initials)</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@employee.EmployeeID">@(employee.Initials)</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label for="add-hours" class="col-form-label"><small>Hours</small></label>
+                                        <input asp-for="@Model.CurrentWL.HoursWorked" id="add-hours" class="form-control" />
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <input asp-for="@Model.CurrentWL.DateWorked" type="hidden" value="@DateTime.Now" />
+                                        <input asp-for="@Model.CurrentWL.CallTrakID" type="hidden" value="@Model.CurrentCT.CallTrakID" />
+                                        <input asp-for="@Model.CurrentWL.ClientID" type="hidden" value="@Model.CurrentCT.ClientID" />
+
+                                        <label for="add-hrs-button" class="col-form-label"><small>Add</small></label>
+                                        <button type="submit" name="submitButton" class="btn-outline-primary form-control" value="add-hrs" id="add-hrs-button">
+                                            Add
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <hr />
+
+                                <div class="wl-table">
+                                    <table class="table table-bordered table-striped mb-2">
+                                        <tbody>
+                                            @foreach (WorkLog workLog in Model.WorkLogs)
+                                            {
+                                                modalid += 1;
+
+                                                <tr>
+                                                    <td>@workLog.Employee.Initials</td>
+                                                    <td>@workLog.DateWorked.ToShortDateString()</td>
+                                                    <td>@workLog.HoursWorked</td>
+                                                    <td>
+
+                                                        <button type="button" class="del-btn" data-bs-toggle="modal" data-bs-target="@("#modal_" + modalid.ToString())">
+                                                            <i class="fa-solid fa-trash-can delete-wl-icon"></i>
+                                                        </button>
+                                                    </td>
+
+                                                    
+                                                    <!-- Modal -->
+                                                    <div class="modal fade" id="modal_@(modalid.ToString())" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                        <div class="modal-dialog">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title">Delete Worklog</h5>
+                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <b>Confirm Delete?</b>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                    <button type="submit" name="submitButton" class="btn btn-danger" value="del-hrs" asp-route-deleteID="@workLog.WorkLogID">
+                                                                        Delete
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div> <!--end card body-->
+
+                            <div class="card-footer">
+                                <div class="hours-section-two">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <label for="dev-est-hrs" class="form-label"><small>Developer Est Hrs</small></label>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <input asp-for="@Model.CurrentCT.DevEstHrs" type="number" id="dev-est-hrs" class="form-control form-input h-75" step="0.25" />
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <label for="quote-est-hrs" class="form-label"><small>Quote Est Hrs</small></label>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <input asp-for="@Model.CurrentCT.QuoteEstHrs" type="number" id="quote-est-hrs" class="form-control form-input h-75" step="0.25" />
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <label for="hrs-in" class="form-label"><small>Hours In</small></label>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <input asp-for="@Model.CurrentCT.HoursIn" type="number" id="hrs-in" class="form-control form-input h-75" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <label for="rate" class="form-label"><small>Rate</small></label>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <input asp-for="@Model.CurrentCT.Rate" type="number" id="rate" class="form-control form-input h-75" step="0.25" />
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <label for="hrs-billed" class="form-label"><small>Billed</small></label>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <input asp-for="@Model.CurrentCT.HoursBilled" type="number" id="hrs-billed" class="form-control form-input h-75" step="0.25" />
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div><!--end card-->
+
+                    </div>
+                    <!--end work log-->
+
+                </div>
+                <!--tab content-->
+
+            </div>
+        </div> <!--end parent row-->
+    </form><!--end form-->  
+
+</div><!--end CallTrak-->
 
 
 

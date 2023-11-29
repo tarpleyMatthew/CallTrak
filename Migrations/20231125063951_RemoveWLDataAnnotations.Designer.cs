@@ -4,6 +4,7 @@ using CallTrak_System.Models.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CallTrak_System.Migrations
 {
     [DbContext(typeof(CallTrakContext))]
-    partial class CallTrakContextModelSnapshot : ModelSnapshot
+    [Migration("20231125063951_RemoveWLDataAnnotations")]
+    partial class RemoveWLDataAnnotations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -572,16 +575,16 @@ namespace CallTrak_System.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("WorkLogID"));
 
-                    b.Property<int?>("CallTrakID")
+                    b.Property<int>("CallTrakID")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ClientID")
+                    b.Property<int>("ClientID")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("DateWorked")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("EmployeeID")
+                    b.Property<int>("EmployeeID")
                         .HasColumnType("int");
 
                     b.Property<double>("HoursWorked")
@@ -649,15 +652,21 @@ namespace CallTrak_System.Migrations
                 {
                     b.HasOne("CallTrak_System.Models.CallTrak", "CallTrak")
                         .WithMany("WorkLogs")
-                        .HasForeignKey("CallTrakID");
+                        .HasForeignKey("CallTrakID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("CallTrak_System.Models.Client", "Client")
                         .WithMany()
-                        .HasForeignKey("ClientID");
+                        .HasForeignKey("ClientID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("CallTrak_System.Models.Employee", "Employee")
                         .WithMany()
-                        .HasForeignKey("EmployeeID");
+                        .HasForeignKey("EmployeeID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("CallTrak");
 

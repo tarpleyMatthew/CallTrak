@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
-using CallTrak_System.Models;
 using CallTrak_System;
+using CallTrak_System.Models.DataAccess;
 
 namespace CallTrak_System
 {

@@ -5,17 +5,108 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - CallTrak_System</title>
 
-    <!--linking css/tinymce-->
+    <!--linking css/tinymce/fontawesome-->
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/CallTrak_System.styles.css" asp-append-version="true" />
     <script src="/lib/tinymce/tinymce.min.js" referrerpolicy="origin"></script>
+    <script src="https://kit.fontawesome.com/b7f176f682.js" crossorigin="anonymous"></script>
 </head>
 <body>
+
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
+        <div class="container-fluid">
+            <button class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <a class="navbar-brand mt-2 mt-lg-0" href="#">
+                    <img src="~/images/SC logo color pos.jpg"
+                         height="25"
+                         alt="SCS Logo"
+                         loading="lazy" />
+                </a>
+
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a asp-action="Index" asp-controller="Home" class="nav-link">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Team</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Projects</a>
+                    </li>
+                </ul>
+
+                    <div class="dropdown">
+                        <a class="dropdown-toggle d-flex align-items-center"
+                           href="#"
+                           role="button"
+                           id="navbarDropdownMenuAvatar"
+                           data-bs-toggle="dropdown"
+                           aria-expanded="false">
+                           <i class="fa-solid fa-user"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
+                            <li>
+                                <a class="dropdown-item" href="#">My profile</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="#">Settings</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="#">Logout</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- Navbar -->
+
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
+    </div>
+
+    <div class="mt-2">
+        <footer>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="p-3">
+                    © 2023 Copyright:
+                    <a class="text-dark" href="#">SilverCreek Software - CallTrak System</a>
+                </div>
+
+                <div class="p-3">
+                    <h6 class="text-uppercase fw-bold">Useful links</h6>
+                    <hr class="mb-4 mt-0 d-inline-block mx-auto" style="width: 60px; background-color: #3B71CA; height: 2px" />
+                    <ul class="list-inline">
+                      <li class="list-inline-item">
+                        <a href="#!" class="text-dark">CRM</a>
+                      </li>
+                      <li class="list-inline-item">
+                        <a href="#!" class="text-dark">Wiki</a>
+                      </li>
+                      <li class="list-inline-item">
+                        <a href="#!" class="text-dark">SCS Website</a>
+                      </li>
+                    </ul>
+                </div>
+            </div>
+        </footer>
     </div>
 
     <!--linking jquery/bootstrap/js-->

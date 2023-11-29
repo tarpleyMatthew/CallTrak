@@ -13,6 +13,14 @@
       "PackagePath": "staticwebassets\\favicon.ico"
     },
     {
+      "Id": "C:\\Users\\tarpl\\OneDrive\\Documents\\Projects_2\\CallTrak System\\CallTrak_System\\CallTrak_System\\wwwroot\\images\\SC logo color pos.jpg",
+      "PackagePath": "staticwebassets\\images\\SC logo color pos.jpg"
+    },
+    {
+      "Id": "C:\\Users\\tarpl\\OneDrive\\Documents\\Projects_2\\CallTrak System\\CallTrak_System\\CallTrak_System\\wwwroot\\js\\CallTrakEditor.js",
+      "PackagePath": "staticwebassets\\js\\CallTrakEditor.js"
+    },
+    {
       "Id": "C:\\Users\\tarpl\\OneDrive\\Documents\\Projects_2\\CallTrak System\\CallTrak_System\\CallTrak_System\\wwwroot\\js\\site.js",
       "PackagePath": "staticwebassets\\js\\site.js"
     },

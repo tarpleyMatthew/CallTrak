@@ -4,6 +4,7 @@ using CallTrak_System.Models.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CallTrak_System.Migrations
 {
     [DbContext(typeof(CallTrakContext))]
-    partial class CallTrakContextModelSnapshot : ModelSnapshot
+    [Migration("20231126081029_MakeFKNullableInWL")]
+    partial class MakeFKNullableInWL
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

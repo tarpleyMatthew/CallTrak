@@ -1,7 +1,13 @@
-﻿using CallTrak_System.Models;
+﻿using CallTrak_System.Models.Helper;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Diagnostics;
+using Microsoft.EntityFrameworkCore;
+using System.Reflection;
+using System;
+using Microsoft.Identity.Client;
+using System.Security.Cryptography.Xml;
+using CallTrak_System.Models.DataAccess;
 
 namespace CallTrak_System.Controllers
 {
@@ -15,15 +21,17 @@ namespace CallTrak_System.Controllers
             context = ctx;
         }
 
+        //get CallTrak
+
         [HttpGet]
         public IActionResult Index(int id = 1)
         {
             //validate entry if load from search
-            int totalCallTraks = context.CallTraks.Count();
-            if(id < 1 || id > totalCallTraks)
+            int maxCallTrak = context.CallTraks.Max(c => c.CallTrakID);
+            if(id < 1 || id > maxCallTrak)
             {
                 TempData["AlertMessage"] = "Invalid ID. Please enter a valid ID.";
-                return RedirectToAction("Index");
+                return RedirectToAction("Index"); //reloads index w/ default ID of 1. Change later
             }
 
             //find ct
@@ -33,69 +41,82 @@ namespace CallTrak_System.Controllers
             if (callTrak == null)
             {
                 TempData["AlertMessage"] = "CallTrak not found.";
-                return RedirectToAction("Index");
+                return RedirectToAction("Index"); //reloads index w/ default ID of 1. Change later
             }
 
-            var model = new CallTrakViewModel
-            {
-                CurrentCT = callTrak,
-                Clients = context.Clients.OrderBy(c => c.Name).ToList(),
-                Employees= context.Employees.OrderBy(c => c.FirstName).ToList(),
-                Statuses= context.Statuses.OrderBy(c => c.Description).ToList(),
-                Types= context.Types.OrderBy(c => c.Description).ToList(),
-
-            };
-
-            return View(model);
+            //Set ViewModel using Helper class
+            var viewModel = VMBuilder.SetVmWithExistingCt(context, callTrak, id);
+            return View(viewModel);
         }
 
-        //post Index action from save button that will add or update depending if CT passed is empty
+        //Post action handles saving CT, and edit/updating Worklogs, this way everything can take place in one form.
 
         [HttpPost]
-        public IActionResult Index(CallTrakViewModel callTrak)
+        public IActionResult Index(CallTrakViewModel vm, string submitButton, int deleteID = 0)
         {
-
             if (ModelState.IsValid)
             {
-                if (callTrak.CurrentCT.CallTrakID == 0)
+                if (vm.CurrentCT.CallTrakID == 0) //if a new CT
                 {
-                    TempData["AlertMessage"] = "New CT added.";
-                    context.Add(callTrak.CurrentCT);
+                    vm.CurrentCT.DateOpened = DateTime.Now;
+                    TempData["AlertMessage"] = "CT Added.";
+
+                    context.Add(vm.CurrentCT);
                 }
                 else
                 {
-                    TempData["AlertMessage"] = "CT updated.";
-                    context.Update(callTrak.CurrentCT);
-                }
-    
-                context.SaveChanges();
-                return RedirectToAction("Index");
+                    switch(submitButton) //switch to exam which button activated the post and behave accordingly
+                    {
+                        case "save":
+                            TempData["AlertMessage"] = "CT Updated";
+                            context.Update(vm.CurrentCT);
+                            break;
 
+                        case "add-hrs":
+                            TempData["AlertMessage"] = "Hours Added";
+                            vm.CurrentWL.DateWorked = DateTime.Now;
+
+                            context.Update(vm.CurrentWL);
+                            context.Update(vm.CurrentCT);
+                            break;
+
+                        case "del-hrs":
+                            if(deleteID != 0)
+                            {
+                                TempData["AlertMessage"] = "Hours Deleted";
+                                vm.CurrentWL = context.WorkLogs.Find(deleteID);
+
+                                context.Remove(vm.CurrentWL);
+                                context.Update(vm.CurrentCT);
+                            }
+                            break;
+                    }
+                }
+
+                context.SaveChanges(); //save changes in DB
+
+                if (submitButton == "save")
+                {
+                    return RedirectToAction("Index", "Home"); //redirect to dash
+                }
+                else
+                {
+                    return RedirectToAction("Index", new {id = vm.CurrentCT.CallTrakID}); //reload CT editor with current/updated CT
+                }  
             } 
             else
             {
                 TempData["AlertMessage"] = "Model state not valid";
-                return View(callTrak);
+                return View(vm); // <- change required. Not a good way to handle. Come back to later
             }
-
         }
 
-        //get add action that passes empty CT
+        //Add action using helper to build ViewModel for new CT
         [HttpGet]
         public IActionResult Add()
         {
-
-            var model = new CallTrakViewModel
-            {
-                CurrentCT = new CallTrak(),
-                Clients = context.Clients.OrderBy(c => c.Name).ToList(),
-                Employees = context.Employees.OrderBy(c => c.FirstName).ToList(),
-                Statuses = context.Statuses.OrderBy(c => c.Description).ToList(),
-                Types = context.Types.OrderBy(c => c.Description).ToList(),
-
-            };
-
-            return View("Index", model);
+            var viewModel = VMBuilder.SetVmForNewCT(context);
+            return View("Index", viewModel);
 
         }
 

@@ -1,9 +1,25 @@
-﻿@model CallTrakViewModel
+﻿@using CallTrak_System.Models.DataLayer;
+
+@model CallTrak_System.Models.DataAccess.DashBoardViewModel
 @{
     ViewData["Title"] = "Dashboard";
+
+    if (TempData["AlertMessage"] != null)
+    {
+        <script>
+            alert('@TempData["AlertMessage"]');
+        </script>
+    }
 }
 
-<script src="https://kit.fontawesome.com/b7f176f682.js" crossorigin="anonymous"></script>
+<!--jquery-->
+<script src="https://code.jquery.com/jquery-3.7.1.slim.js"
+        integrity="sha256-UgvvN8vBkgO0luPSUl2s8TIlOSYRoGFAX4jlCIm9Adc="
+        crossorigin="anonymous"></script>
+<!--datatables-->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
+
 
 <div id="main_container">
 
@@ -11,81 +27,112 @@
 
     <div class="row">
         <div class="col-sm-2">
-            <form asp-action="Filter" method="post">
+            <form asp-action="Index" method="post">
                 <div class="form-group">
-                    <label>Category:</label>
-                    <select name="filter" class="form-control">
-                    <option>1</option>
+                    <label>Employee:</label>
+                    <select name="filterArray"
+                        asp-items="@(new SelectList(Model.Employees, "EmployeeID", "FirstName"))" class="form-control">
+                        <option value="0" class="text-secondary" selected>----</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Due:</label>
-                    <select name="filter" class="form-control">
-                        <option>1</option>
+                    <label>Client:</label>
+                    <select name="filterArray"
+                        asp-items="@(new SelectList(Model.Clients, "ClientID", "Name"))" class="form-control">
+                        <option value="0" class="text-secondary" selected>----</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Status:</label>
-                    <select name="filter" class="form-control">
-                        <option>1</option>
+                    <select name="filterArray"
+                        asp-items="@(new SelectList(Model.Statuses, "StatusID", "Description"))" class="form-control">
+                        <option value="0" class="text-secondary" selected>----</option>
                     </select>
                 </div>
-                <button type="submit" class="btn btn-primary">Filter</button>
-                <a asp-action="Index" asp-route-id="" class="btn btn-primary">Clear</a>
+                <div class="form-group">
+                    <label>Priority:</label>
+                    <select name="filterArray"
+                        asp-items="@(new SelectList(Model.Priorities, "PriorityId", "Description"))" class="form-control">
+                        <option value="0" class="text-secondary" selected>----</option>
+                    </select>
+                </div>
+
+                <div class="mt-2">
+                    <button type="submit" class="btn btn-primary">Refresh</button>
+                    <a asp-action="Index" asp-route-id="" class="btn btn-primary">Clear</a>
+                </div>
+                
             </form>
         </div>
         <div class="col-sm-10">
 
             <a asp-controller="Editor" asp-action="Add"><b>New CallTrak</b></a>
-
-            <table class="table table-bordered table-striped mt-2">
-                <thead>
-                    <tr>
-                        <th>CallTrak ID</th>
-                        <th>Employee</th>
-                        <th>Type</th>
-                        <th>Status</th>
-                        <th class="w-25">Controls</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (CallTrak ct in Model.CallTraks)
-                    {
+            <div class="table-container mt-2">
+                <table id="dash-table" class="table table-bordered table-striped table-hover">
+                    <thead>
                         <tr>
-                            <td>@ct.CallTrakID</td>
-                            <td>@ct.Employee.FirstName</td>
-                            <td>@ct.Type.Description</td>
-                            <td>@ct.Status.Description</td>
-                            <td>
-                                <form method="post"
-                                  
-                                  class="mr-2">
+                            <th>CT #</th>
+                            <th>Employee</th>
+                            <th>Short Desc</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th>Edit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (CallTrak ct in Model.CallTraks)
+                        {
+                            <tr>
+                                <td>@ct.CallTrakID</td>
+                                <td>@ct.Employee.FirstName</td>
+                                <td>@ct.ShortDesc</td>
+                                <td>@ct.Type.Description</td>
+                                <td>
+                                    @{
+                                        var statusClass = "badge rounded-pill p-1 ";
 
-                                    <input type="hidden"
-                                       name="" value="" />
+                                        switch (ct.StatusID)
+                                        {
+                                            case 1:
+                                                statusClass += "bg-info";
+                                                break;
+                                            case 2:
+                                                statusClass += "bg-success";
+                                                break;
+                                            case 3:
+                                                statusClass += "bg-warning";
+                                                break;
+                                            case 4:
+                                                statusClass += "bg-dark";
+                                                break;
+                                            case 5:
+                                                statusClass += "bg-secondary";
+                                                break;
+                                            case 6:
+                                                statusClass += "bg-warning";
+                                                break;
+                                            default:
+                                                statusClass += "bg-danger";
+                                                break;
+                                        }
+                                    }
 
-                                    <a  asp-controller="Editor"
-                                        asp-action="Index"
-                                        asp-route-id="@ct.CallTrakID"
-                                        class="btn btn-primary btn-sm">
-                                        Edit
+                                    <span class="@statusClass">@ct.Status.Description</span>
+                                </td>
+
+                                <td>
+                                    <a asp-controller="Editor" asp-action="Index" asp-route-id="@ct.CallTrakID">
+                                        <i class="fa-solid fa-pen-to-square edit-icon"></i>
                                     </a>
 
-                                    <button type="submit"
-                                        class="btn btn-primary btn-sm">
-                                        Delete
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            
         </div>
-    </div>
-        
+    </div>     
 </div><!--end Main container-->
-
-
-
-

@@ -1,22 +1,39 @@
-html {
-  font-size: 14px;
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
 body {
-  margin-bottom: 60px;
+    min-height: 100vh;
+    display: grid;
+    grid-template-rows: 1fr auto;
+}
+nav {
+    box-shadow: 0 3px 7px 0 rgba(0, 0, 0, .13), 0 1px 2px 0 rgba(0, 0, 0, .11);
+}
+
+.wl-table {
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+
+.del-btn {
+    border: none;
+    background: none;
+}
+
+.delete-wl-icon {
+    color: #DC4C64;
+    font-size: 1.2rem;
+}
+
+    .delete-wl-icon:hover {
+        color: #ed1a3d;
+        cursor: pointer;
+    }
+
+.edit-icon {
+    font-size: 1.5rem;
+}
+
+footer {
+    margin-top: auto;
+    padding-top: 1rem;
+    background-color: rgba(0, 0, 0, 0.2);
 }
